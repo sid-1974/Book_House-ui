@@ -76,7 +76,7 @@ const BookCarousel: React.FC<BookCarouselProps> = ({ books }) => {
             {getVisibleBooks().map((book, index) => (
               <div
                 key={`${book.id}-${index}`}
-                className="transform transition-all duration-500 hover:scale-105"
+                className="transform transition-all duration-200 hover:scale-80"
               >
                 <BookCard
                   book={book}

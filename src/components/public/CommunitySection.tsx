@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Star, Heart, MessageCircle, BookOpen } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
+import React, { useState } from "react";
+import { Star, Heart, MessageCircle, BookOpen } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
 
 interface CommunityReview {
   id: string;
@@ -15,88 +15,65 @@ interface CommunityReview {
 
 const mockCommunityReviews: CommunityReview[] = [
   {
-    id: '1',
-    username: 'Emma Thompson',
-    bookTitle: 'The Art of Storytelling',
+    id: "1",
+    username: "Emma Thompson",
+    bookTitle: "The Art of Storytelling",
     rating: 5,
-    review: "An absolutely captivating read! The author's ability to weave complex narratives is truly remarkable. I couldn't put it down.",
-    timeAgo: '2 days ago',
+    review:
+      "An absolutely captivating read! The author's ability to weave complex narratives is truly remarkable. I couldn't put it down.",
+    timeAgo: "2 days ago",
     likes: 12,
-    replies: 3
+    replies: 3,
   },
   {
-    id: '2',
-    username: 'Michael Chen',
-    bookTitle: 'Cosmic Horizons',
+    id: "2",
+    username: "Michael Chen",
+    bookTitle: "Cosmic Horizons",
     rating: 4,
-    review: 'Mind-bending science fiction at its finest. The world-building is incredible and the characters feel so real.',
-    timeAgo: '1 week ago',
+    review:
+      "Mind-bending science fiction at its finest. The world-building is incredible and the characters feel so real.",
+    timeAgo: "1 week ago",
     likes: 8,
-    replies: 1
+    replies: 1,
   },
   {
-    id: '3',
-    username: 'Sarah Davis',
-    bookTitle: 'Whispers of the Heart',
+    id: "3",
+    username: "Sarah Davis",
+    bookTitle: "Whispers of the Heart",
     rating: 5,
-    review: 'A beautiful romance that touched my soul. Perfect for a cozy weekend read with a cup of tea.',
-    timeAgo: '3 days ago',
+    review:
+      "A beautiful romance that touched my soul. Perfect for a cozy weekend read with a cup of tea.",
+    timeAgo: "3 days ago",
     likes: 15,
-    replies: 5
-  }
+    replies: 5,
+  },
 ];
 
 const CommunitySection: React.FC = () => {
   const { user } = useAuth();
-  const [bookTitle, setBookTitle] = useState('');
-  const [author, setAuthor] = useState('');
+  const [bookTitle, setBookTitle] = useState("");
+  const [author, setAuthor] = useState("");
   const [rating, setRating] = useState(0);
-  const [review, setReview] = useState('');
+  const [review, setReview] = useState("");
   const [hoverRating, setHoverRating] = useState(0);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
 
-    console.log('Submitting review:', {
+    console.log("Submitting review:", {
       bookTitle,
       author,
       rating,
       review,
-      userId: user.id
+      userId: user.id,
     });
 
     // Reset form
-    setBookTitle('');
-    setAuthor('');
+    setBookTitle("");
+    setAuthor("");
     setRating(0);
-    setReview('');
-  };
-
-  const renderStars = (rating: number, interactive = false) => {
-    return (
-      <div className="flex items-center space-x-1">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <button
-            key={star}
-            type={interactive ? 'button' : undefined}
-            onClick={interactive ? () => setRating(star) : undefined}
-            onMouseEnter={interactive ? () => setHoverRating(star) : undefined}
-            onMouseLeave={interactive ? () => setHoverRating(0) : undefined}
-            className={interactive ? 'focus:outline-none transition-colors' : ''}
-            disabled={!interactive}
-          >
-            <Star
-              className={`h-6 w-6 ${
-                star <= (interactive ? (hoverRating || rating) : rating)
-                  ? 'text-yellow-400 fill-yellow-400'
-                  : 'text-gray-300'
-              } ${interactive ? 'hover:text-yellow-400 cursor-pointer' : ''}`}
-            />
-          </button>
-        ))}
-      </div>
-    );
+    setReview("");
   };
 
   return (
@@ -107,7 +84,8 @@ const CommunitySection: React.FC = () => {
             Join Our Community
           </h2>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            Share your reading experiences and discover new favorites through our community reviews
+            Share your reading experiences and discover new favorites through
+            our community reviews
           </p>
         </div>
 
@@ -116,7 +94,9 @@ const CommunitySection: React.FC = () => {
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
             <div className="flex items-center space-x-2 mb-8">
               <BookOpen className="h-6 w-6 text-gray-700" />
-              <h3 className="text-xl font-semibold text-gray-900">Add Your Book Review</h3>
+              <h3 className="text-xl font-semibold text-gray-900">
+                Add Your Book Review
+              </h3>
             </div>
 
             {user ? (
@@ -166,8 +146,8 @@ const CommunitySection: React.FC = () => {
                         <Star
                           className={`h-10 w-10 ${
                             star <= (hoverRating || rating)
-                              ? 'text-yellow-400 fill-yellow-400'
-                              : 'text-gray-300 hover:text-yellow-200'
+                              ? "text-yellow-400 fill-yellow-400"
+                              : "text-gray-300 hover:text-yellow-200"
                           } transition-all duration-200 cursor-pointer`}
                         />
                       </button>
@@ -202,13 +182,19 @@ const CommunitySection: React.FC = () => {
                 </button>
               </form>
             ) : (
-              <div className="text-center py-12">
+              <div className="text-center py-2">
                 <p className="text-gray-600 mb-6">
                   Please log in to share your book reviews with the community.
                 </p>
-                <a href="/login" className="btn-primary">
+                <a href="/login" className="btn-primary mb-8">
                   Login to Continue
                 </a>
+                <div className="flex justify-center items-center space-x-3 mt-40">
+                  <BookOpen className="h-12 w-12 text-black" />
+                  <span className="text-4xl font-bold text-black">
+                    BookHouse
+                  </span>
+                </div>
               </div>
             )}
           </div>
@@ -221,7 +207,10 @@ const CommunitySection: React.FC = () => {
 
             <div className="space-y-8">
               {mockCommunityReviews.map((communityReview) => (
-                <div key={communityReview.id} className="border-b border-gray-200 pb-6 last:border-b-0 last:pb-0">
+                <div
+                  key={communityReview.id}
+                  className="border-b border-gray-200 pb-6 last:border-b-0 last:pb-0"
+                >
                   <div className="flex items-start justify-between mb-3">
                     <div>
                       <h4 className="font-semibold text-gray-900 text-base">
@@ -237,8 +226,8 @@ const CommunitySection: React.FC = () => {
                           key={star}
                           className={`h-4 w-4 ${
                             star <= communityReview.rating
-                              ? 'text-yellow-400 fill-yellow-400'
-                              : 'text-gray-300'
+                              ? "text-yellow-400 fill-yellow-400"
+                              : "text-gray-300"
                           }`}
                         />
                       ))}
@@ -267,9 +256,7 @@ const CommunitySection: React.FC = () => {
             </div>
 
             <div className="mt-8 text-center">
-              <button className="btn-secondary">
-                View All Reviews
-              </button>
+              <button className="btn-secondary">View All Reviews</button>
             </div>
           </div>
         </div>

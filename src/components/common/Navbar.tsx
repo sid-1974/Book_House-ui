@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { BookOpen, LogOut, User, Settings } from 'lucide-react';
+import { BookOpen, LogOut, Settings } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 const Navbar: React.FC = () => {
@@ -22,6 +22,12 @@ const Navbar: React.FC = () => {
           </Link>
 
           <div className="flex items-center space-x-8">
+            <Link 
+              to="/" 
+              className="text-gray-700 hover:text-black transition-colors font-medium"
+            >
+              Home
+            </Link>
             <Link 
               to="/books" 
               className="text-gray-700 hover:text-black transition-colors font-medium"

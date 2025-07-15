@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Edit, Trash2, Check, X, Eye, Filter, Search } from 'lucide-react';
+import { Edit, Trash2, Check, X,  Filter, Search } from 'lucide-react';
 import { Book } from '../../types';
 
 interface BookTableProps {
