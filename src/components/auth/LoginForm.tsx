@@ -3,7 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { LogIn, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
-const LoginForm: React.FC = () => {
+interface LoginFormProps {
+  onToggleForm: () => void;
+}
+
+const LoginForm: React.FC <LoginFormProps> = ({onToggleForm}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -28,7 +32,7 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 flex  justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
           <div className="flex justify-center">
@@ -109,6 +113,17 @@ const LoginForm: React.FC = () => {
               {isLoading ? 'Signing in...' : 'Sign in'}
             </button>
           </div>
+                   <div className="text-center text-sm text-gray-600">
+          Don't have an account?{" "}
+          <button
+            type="button"
+            onClick={onToggleForm}
+            className="font-medium text-black hover:text-gray-800 cursor-pointer"
+          >
+            Sign up
+          </button>
+        </div>
+
         </form>
       </div>
     </div>
