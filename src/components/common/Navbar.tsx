@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom'; // Changed from Link to NavLink
+import React, { useEffect, useState } from 'react';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'; // Changed from Link to NavLink
 import { BookOpen, LogOut, Settings, Menu, X } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
+import useAuth from '../../hook/UseAuth';
 
 const Navbar: React.FC = () => {
-  const { user, logout } = useAuth();
+  const { isLoggedIn,logout,userRole} = useAuth();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
@@ -23,6 +24,12 @@ const Navbar: React.FC = () => {
     color: 'black',
   };
 
+  useEffect(() => {
+    if (isLoggedIn && (location.pathname === '/' || location.pathname === '/login')) {
+      navigate('/books', { replace: true });
+    }
+  }, [isLoggedIn, location.pathname, navigate]);
+
   return (
     <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -36,7 +43,7 @@ const Navbar: React.FC = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            {!user &&(
+            {!isLoggedIn &&(
             <NavLink 
               to="/" 
               className="text-gray-700 hover:text-black transition-colors font-medium"
@@ -78,10 +85,10 @@ const Navbar: React.FC = () => {
 
           {/* Desktop Auth Links */}
           <div className="hidden md:flex items-center space-x-4">
-            {user ? (
+            {isLoggedIn ? (
               <>
-                <span className="text-gray-700">Welcome, {user.username}</span>
-                {user.role === 'admin' && (
+                <span className="text-gray-700">Welcome, {userRole}</span>
+                {userRole === 'admin' && (
                   <NavLink
                     to="/admin"
                     className="flex items-center space-x-1 text-gray-700 hover:text-black transition-colors"
@@ -169,12 +176,12 @@ const Navbar: React.FC = () => {
             </NavLink>
           </div>
           <div className="pt-4 pb-3 border-t border-gray-200">
-            {user ? (
+            {isLoggedIn ? (
               <div className="px-5 space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-base font-medium text-gray-800">Welcome, {user.username}</span>
+                  <span className="text-base font-medium text-gray-800">Welcome, {userRole}</span>
                 </div>
-                {user.role === 'admin' && (
+                {userRole === 'admin' && (
                   <NavLink
                     to="/admin"
                     className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-black hover:bg-gray-50"

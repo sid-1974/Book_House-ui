@@ -37,9 +37,8 @@ export interface Review {
   createdAt: string;
 }
 
-export interface AuthContextType {
-  user: User | null;
-  login: (username: string, password: string) => Promise<boolean>;
-  logout: () => void;
-  isLoading: boolean;
-}
+// export interface AuthContextType {
+//   user: User | null;
+//   islogin: (email: string, password: string) => Promise<boolean>;
+//   islogout: () => void;
+// }

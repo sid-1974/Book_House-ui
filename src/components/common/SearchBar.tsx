@@ -1,16 +1,24 @@
 import React, { useState } from 'react';
 import { Search } from 'lucide-react';
+import useAuth from '../../hook/UseAuth';
+import { useNavigate } from 'react-router-dom';
 
 interface SearchBarProps {
   onSearch: (bookName: string, author: string) => void;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
+   const { isLoggedIn,} = useAuth();
+   const navigate = useNavigate();
   const [bookName, setBookName] = useState('');
   const [author, setAuthor] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if(!isLoggedIn){
+      navigate('/login');
+      return;
+    }
     onSearch(bookName, author);
   };
 

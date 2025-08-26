@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Star, Heart, MessageCircle, BookOpen } from "lucide-react";
-import { useAuth } from "../../context/AuthContext";
+import useAuth from "../../hook/UseAuth";
+
 
 interface CommunityReview {
   id: string;
@@ -50,7 +51,7 @@ const mockCommunityReviews: CommunityReview[] = [
 ];
 
 const CommunitySection: React.FC = () => {
-  const { user } = useAuth();
+  const { isLoggedIn,userId} = useAuth();
   const [bookTitle, setBookTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [rating, setRating] = useState(0);
@@ -59,14 +60,14 @@ const CommunitySection: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    if (!isLoggedIn) return;
 
     console.log("Submitting review:", {
       bookTitle,
       author,
       rating,
       review,
-      userId: user.id,
+      userId,
     });
 
     // Reset form
@@ -99,7 +100,7 @@ const CommunitySection: React.FC = () => {
               </h3>
             </div>
 
-            {user ? (
+            {isLoggedIn ? (
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-900 mb-3">

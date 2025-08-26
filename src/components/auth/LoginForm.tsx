@@ -1,34 +1,35 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { LogIn, Eye, EyeOff } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
+import { useLoginMutation } from '../../api/auth';
+import LoadingContainer from '../../utils/loader/LoadingContainer';
+
+
 
 interface LoginFormProps {
   onToggleForm: () => void;
 }
 
 const LoginForm: React.FC <LoginFormProps> = ({onToggleForm}) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [formData, setFormData] = useState({
+    identifier: "",
+    password: "",
+  });
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
-  const { login, isLoading } = useAuth();
-  const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+ 
+  const loginMutation = useLoginMutation();
+   const { mutate, isPending:isLoading } = loginMutation;
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError('');
-
-    try {
-      const success = await login(username, password);
-      if (success) {
-        navigate('/');
-      } else {
-        setError('Invalid credentials. Please try again.');
-      }
-    } catch (err) {
-      setError('An error occurred. Please try again.');
-    }
+    mutate(formData);
   };
 
   return (
@@ -46,21 +47,21 @@ const LoginForm: React.FC <LoginFormProps> = ({onToggleForm}) => {
           </p>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <form className="mt-8 space-y-6"  onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-700">
                 Username
               </label>
               <input
-                id="username"
-                name="username"
+                id="identifier"
+                name="identifier"
                 type="text"
                 required
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={formData.identifier}
+                onChange={handleChange}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
-                placeholder="Enter your username"
+                placeholder="Enter your email or Mobile number"
               />
             </div>
 
@@ -74,8 +75,8 @@ const LoginForm: React.FC <LoginFormProps> = ({onToggleForm}) => {
                   name="password"
                   type={showPassword ? 'text' : 'password'}
                   required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={formData.password}
+                onChange={handleChange}
                   className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black pr-10"
                   placeholder="Enter your password"
                 />
@@ -94,23 +95,14 @@ const LoginForm: React.FC <LoginFormProps> = ({onToggleForm}) => {
             </div>
           </div>
 
-          {error && (
-            <div className="text-red-600 text-sm text-center">{error}</div>
-          )}
-
-          <div className="text-center text-sm text-gray-600">
-            <p>Demo credentials:</p>
-            <p><strong>Admin:</strong> username: admin, password: password</p>
-            <p><strong>User:</strong> username: user1, password: password</p>
-          </div>
-
           <div>
             <button
               type="submit"
               disabled={isLoading}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:opacity-50"
             >
-              {isLoading ? 'Signing in...' : 'Sign in'}
+              {/* {isLoading ? 'Signing in...' : 'Sign in'} */}
+              Sign in
             </button>
           </div>
                    <div className="text-center text-sm text-gray-600">
@@ -125,6 +117,7 @@ const LoginForm: React.FC <LoginFormProps> = ({onToggleForm}) => {
         </div>
 
         </form>
+        <LoadingContainer open={isLoading} message="Signing in..." />
       </div>
     </div>
   );

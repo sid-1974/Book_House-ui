@@ -1,51 +1,33 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { AuthProvider, useAuth } from './context/AuthContext';
-import Navbar from './components/common/Navbar';
-import Footer from './components/common/Footer';
-import Landing from './pages/Landing';
-import Login from './pages/Login';
-import AdminDashboard from './pages/AdminDashboard';
-import Books from './pages/Books';
-import Authors from './pages/Authors';
-import Community from './pages/Community';
-import About from './pages/About';
-import './styles/variables.scss';
+import React, { lazy, Suspense } from "react";
+import { BrowserRouter as Router, Routes, Route, } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+// import { AuthProvider, useAuth } from './context/AuthContext';
+import Navbar from "./components/common/Navbar";
+import Footer from "./components/common/Footer";
+import "./styles/variables.scss";
+import ProtectedRoute from "./router/RouterProtection";
+import LoadingContainer from "./utils/loader/LoadingContainer";
+
+
+const Landing = lazy(() => import("./pages/Landing"));
+const Login = lazy(() => import("./pages/Login"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+const Books = lazy(() => import("./pages/Books"));
+const Authors = lazy(() => import("./pages/Authors"));
+const Community = lazy(() => import("./pages/Community"));
+const About = lazy(() => import("./pages/About"));
+
 
 const queryClient = new QueryClient();
 
-const ProtectedRoute: React.FC<{ children: React.ReactNode, requiredRole?: string }> = ({ 
-  children, 
-  requiredRole 
-}) => {
-  const { user, isLoading } = useAuth();
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-black"></div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-
-  if (requiredRole && user.role !== requiredRole) {
-    return <Navigate to="/" replace />;
-  }
-
-  return <>{children}</>;
-};
-
 const AppContent: React.FC = () => {
+
   return (
+       
     <Router>
       <div className="min-h-screen bg-white">
         <Navbar />
-        <main>
+        <main> 
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
@@ -53,28 +35,28 @@ const AppContent: React.FC = () => {
             <Route path="/authors" element={<Authors />} />
             <Route path="/community" element={<Community />} />
             <Route path="/about" element={<About />} />
-            <Route 
-              path="/admin" 
-              element={
-                <ProtectedRoute requiredRole="admin">
-                  <AdminDashboard />
-                </ProtectedRoute>
-              } 
-            />
+
+            //admin route
+            <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+              <Route path="/admin" element={<AdminDashboard />} />
+            </Route>
           </Routes>
         </main>
         <Footer />
       </div>
     </Router>
+   
   );
 };
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
+      {/* <AuthProvider> */}
+      <Suspense fallback={<LoadingContainer open={true} message="Loading..." />}>
+      <AppContent />
+       </Suspense>
+      {/* </AuthProvider> */}
     </QueryClientProvider>
   );
 }
