@@ -179,14 +179,22 @@ const ToastContainer = ({}: ToastContainerProps) => {
   }, []);
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        top: '0.5rem',
-        right: '1rem',
-        zIndex: 9999,
-      }}
-    >
+  <div
+  className="
+    fixed
+    top-4
+    z-[9999]
+    flex
+    flex-col      
+    space-y-2       
+    w-full
+    items-center          
+    sm:items-end          
+    sm:w-auto
+    sm:right-4
+    sm:top-0.5
+  "
+>
       {toasts.map((toast) => (
         <Toast
           key={toast.id}
@@ -218,22 +226,18 @@ export default ToastContainer;
 export const toast: ToastAPI = {
   success: (message: ReactNode): number => {
     if (toastAPI) return toastAPI.success(message);
-    console.warn('Toast container not initialized');
     return Date.now();
   },
   error: (message: ReactNode): number => {
     if (toastAPI) return toastAPI.error(message);
-    console.warn('Toast container not initialized');
     return Date.now();
   },
   warning: (message: ReactNode): number => {
     if (toastAPI) return toastAPI.warning(message);
-    console.warn('Toast container not initialized');
     return Date.now();
   },
   info: (message: ReactNode): number => {
     if (toastAPI) return toastAPI.info(message);
-    console.warn('Toast container not initialized');
     return Date.now();
   },
   dismiss: (id: number): void => {

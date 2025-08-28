@@ -3,7 +3,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import bookVideo from '../../../dist/assets/Book-BXvk7vIC.mp4';
+// import bookVideo from '../../../dist/assets/Book-BXvk7vIC.mp4';
 
 interface LoadingContainerProps {
   open: boolean;
@@ -52,7 +52,7 @@ const LoadingContainer: React.FC<LoadingContainerProps> = ({
             marginBottom: '16px'
           }}
         >
-          <source src={bookVideo} type="video/mp4" />
+          <source src="/assets/Book.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
         

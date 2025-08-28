@@ -1,18 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { NavLink, useLocation, useNavigate } from 'react-router-dom'; // Changed from Link to NavLink
-import { BookOpen, LogOut, Settings, Menu, X } from 'lucide-react';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { BookOpen, Settings, Menu, X } from 'lucide-react';
 import useAuth from '../../hook/UseAuth';
+import Logout from './Logout'; // Import the new Logout component
 
 const Navbar: React.FC = () => {
-  const { isLoggedIn,logout,userRole} = useAuth();
+  const { isLoggedIn, userRole } = useAuth();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
-
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -98,13 +94,7 @@ const Navbar: React.FC = () => {
                     <span>Admin</span>
                   </NavLink>
                 )}
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center space-x-1 btn-secondary"
-                >
-                  <LogOut className="h-4 w-4" />
-                  <span>Logout</span>
-                </button>
+                <Logout variant="full" />
               </>
             ) : (
               <NavLink to="/login" className="btn-primary">
@@ -192,16 +182,10 @@ const Navbar: React.FC = () => {
                     <span>Admin</span>
                   </NavLink>
                 )}
-                <button
-                  onClick={() => {
-                    handleLogout();
-                    setIsMenuOpen(false);
-                  }}
-                  className="w-full flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-black hover:bg-gray-50"
-                >
-                  <LogOut className="h-4 w-4" />
-                  <span>Logout</span>
-                </button>
+                <Logout
+                  variant="full" 
+                  onCloseMenu={() => setIsMenuOpen(false)} 
+                />
               </div>
             ) : (
               <div className="px-5">
