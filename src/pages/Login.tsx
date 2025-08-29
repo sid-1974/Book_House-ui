@@ -1,22 +1,23 @@
-import React, { useState } from 'react';
-import LoginForm from '../components/auth/LoginForm';
-import SignUpForm from '../components/auth/SingUpForm';
+import React, { useState } from "react";
+import LoginForm from "../components/auth/LoginForm";
+import SignUpForm from "../components/auth/SingUpForm";
+import ForgotPassword from "../components/auth/ForgotPassword";
+ // 👈 create this
 
+type AuthMode = "login" | "signup" | "forgot";
 
 const AuthPage: React.FC = () => {
-  const [isLogin, setIsLogin] = useState(true);
+  const [mode, setMode] = useState<AuthMode>("login");
 
-  const toggleForm = () => {
-    setIsLogin(!isLogin);
-  };
+  const switchToLogin = () => setMode("login");
+  const switchToSignup = () => setMode("signup");
+  const switchToForgot = () => setMode("forgot");
 
   return (
     <div>
-      {isLogin ? (
-        <LoginForm onToggleForm={toggleForm} />
-      ) : (
-        <SignUpForm onToggleForm={toggleForm} />
-      )}
+      {mode === "login" && <LoginForm onToggleForm={switchToSignup} onForgotPassword={switchToForgot} />}
+      {mode === "signup" && <SignUpForm onToggleForm={switchToLogin} />}
+      {mode === "forgot" && <ForgotPassword onBackToLogin={switchToLogin} />}
     </div>
   );
 };
