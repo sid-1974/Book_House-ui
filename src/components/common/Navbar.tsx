@@ -1,28 +1,38 @@
-import React, { useEffect, useState } from 'react';
-import { NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { BookOpen, Settings, Menu, X } from 'lucide-react';
-import useAuth from '../../hook/UseAuth';
-import Logout from './Logout'; // Import the new Logout component
+import React, { useEffect, useState } from "react";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { BookOpen, Settings, Menu, X } from "lucide-react";
+import useAuth from "../../hook/UseAuth";
+import Logout from "./Logout";
+import { Avatar } from "@mui/material";
+import { useGetProfileById } from "../../api/user";
 
 const Navbar: React.FC = () => {
   const { isLoggedIn, userRole } = useAuth();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const { data: user } = useGetProfileById();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  // Function to determine active style
   const activeStyle = {
-    borderBottom: '2px solid black',
-    color: 'black',
+    borderBottom: "2px solid black",
+    color: "black",
+  };
+
+  const handleAvatarClick = () => {
+    navigate("/profile");
+    setIsMenuOpen(false);
   };
 
   useEffect(() => {
-    if (isLoggedIn && (location.pathname === '/' || location.pathname === '/login')) {
-      navigate('/books', { replace: true });
+    if (
+      isLoggedIn &&
+      (location.pathname === "/" || location.pathname === "/login")
+    ) {
+      navigate("/books", { replace: true });
     }
   }, [isLoggedIn, location.pathname, navigate]);
 
@@ -39,41 +49,41 @@ const Navbar: React.FC = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            {!isLoggedIn &&(
-            <NavLink 
-              to="/" 
-              className="text-gray-700 hover:text-black transition-colors font-medium"
-              style={({ isActive }) => isActive ? activeStyle : undefined}
-              end
-            >
-              Home
-            </NavLink>
+            {!isLoggedIn && (
+              <NavLink
+                to="/"
+                className="text-gray-700 hover:text-black transition-colors font-medium"
+                style={({ isActive }) => (isActive ? activeStyle : undefined)}
+                end
+              >
+                Home
+              </NavLink>
             )}
-            <NavLink 
-              to="/books" 
+            <NavLink
+              to="/books"
               className="text-gray-700 hover:text-black transition-colors font-medium"
-              style={({ isActive }) => isActive ? activeStyle : undefined}
+              style={({ isActive }) => (isActive ? activeStyle : undefined)}
             >
               Books
             </NavLink>
-            <NavLink 
-              to="/authors" 
+            <NavLink
+              to="/authors"
               className="text-gray-700 hover:text-black transition-colors font-medium"
-              style={({ isActive }) => isActive ? activeStyle : undefined}
+              style={({ isActive }) => (isActive ? activeStyle : undefined)}
             >
               Authors
             </NavLink>
-            <NavLink 
-              to="/community" 
+            <NavLink
+              to="/community"
               className="text-gray-700 hover:text-black transition-colors font-medium"
-              style={({ isActive }) => isActive ? activeStyle : undefined}
+              style={({ isActive }) => (isActive ? activeStyle : undefined)}
             >
               Community
             </NavLink>
-            <NavLink 
-              to="/about" 
+            <NavLink
+              to="/about"
               className="text-gray-700 hover:text-black transition-colors font-medium"
-              style={({ isActive }) => isActive ? activeStyle : undefined}
+              style={({ isActive }) => (isActive ? activeStyle : undefined)}
             >
               About Us
             </NavLink>
@@ -83,17 +93,40 @@ const Navbar: React.FC = () => {
           <div className="hidden md:flex items-center space-x-4">
             {isLoggedIn ? (
               <>
-                <span className="text-gray-700">Welcome, {userRole}</span>
-                {userRole === 'admin' && (
-                  <NavLink
-                    to="/admin"
-                    className="flex items-center space-x-1 text-gray-700 hover:text-black transition-colors"
-                    style={({ isActive }) => isActive ? activeStyle : undefined}
+                <div className="flex items-center space-x-4">
+                  {userRole === "admin" && (
+                    <NavLink
+                      to="/admin"
+                      className="flex items-center space-x-1 text-gray-700 hover:text-black transition-colors"
+                      style={({ isActive }) =>
+                        isActive ? activeStyle : undefined
+                      }
+                    >
+                      <Settings className="h-4 w-4" />
+                      <span>Admin</span>
+                    </NavLink>
+                  )}
+                  <div
+                    className="flex items-center space-x-2 cursor-pointer"
+                    onClick={handleAvatarClick}
+                    title="profile"
                   >
-                    <Settings className="h-4 w-4" />
-                    <span>Admin</span>
-                  </NavLink>
-                )}
+                    <Avatar
+                      sx={{
+                        width: 52,
+                        height: 52,
+                        bgcolor: "black",
+                        color: "white",
+                        fontSize: "14px",
+                      }}
+                    >
+                      {`${user?.fullname[0]}`.toUpperCase()}
+                    </Avatar>
+                    <span className="text-base font-medium text-gray-800">
+                      {user?.fullname}
+                    </span>
+                  </div>
+                </div>
                 <Logout variant="full" />
               </>
             ) : (
@@ -123,43 +156,43 @@ const Navbar: React.FC = () => {
       {isMenuOpen && (
         <div className="md:hidden bg-white">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            <NavLink 
-              to="/" 
+            <NavLink
+              to="/"
               className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-black hover:bg-gray-50"
-              style={({ isActive }) => isActive ? activeStyle : undefined}
+              style={({ isActive }) => (isActive ? activeStyle : undefined)}
               onClick={() => setIsMenuOpen(false)}
               end
             >
               Home
             </NavLink>
-            <NavLink 
-              to="/books" 
+            <NavLink
+              to="/books"
               className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-black hover:bg-gray-50"
-              style={({ isActive }) => isActive ? activeStyle : undefined}
+              style={({ isActive }) => (isActive ? activeStyle : undefined)}
               onClick={() => setIsMenuOpen(false)}
             >
               Books
             </NavLink>
-            <NavLink 
-              to="/authors" 
+            <NavLink
+              to="/authors"
               className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-black hover:bg-gray-50"
-              style={({ isActive }) => isActive ? activeStyle : undefined}
+              style={({ isActive }) => (isActive ? activeStyle : undefined)}
               onClick={() => setIsMenuOpen(false)}
             >
               Authors
             </NavLink>
-            <NavLink 
-              to="/community" 
+            <NavLink
+              to="/community"
               className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-black hover:bg-gray-50"
-              style={({ isActive }) => isActive ? activeStyle : undefined}
+              style={({ isActive }) => (isActive ? activeStyle : undefined)}
               onClick={() => setIsMenuOpen(false)}
             >
               Community
             </NavLink>
-            <NavLink 
-              to="/about" 
+            <NavLink
+              to="/about"
               className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-black hover:bg-gray-50"
-              style={({ isActive }) => isActive ? activeStyle : undefined}
+              style={({ isActive }) => (isActive ? activeStyle : undefined)}
               onClick={() => setIsMenuOpen(false)}
             >
               About Us
@@ -169,13 +202,33 @@ const Navbar: React.FC = () => {
             {isLoggedIn ? (
               <div className="px-5 space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-base font-medium text-gray-800">Welcome, {userRole}</span>
+                  <div
+                    className="flex items-center space-x-2 cursor-pointer"
+                    onClick={handleAvatarClick}
+                  >
+                    <Avatar
+                      sx={{
+                        width: 52,
+                        height: 52,
+                        bgcolor: "black",
+                        color: "white",
+                        fontSize: "14px",
+                      }}
+                    >
+                      {`${user?.fullname[0]}`.toUpperCase()}
+                    </Avatar>
+                    <span className="text-base font-medium text-gray-800">
+                      {user?.fullname}
+                    </span>
+                  </div>
                 </div>
-                {userRole === 'admin' && (
+                {userRole === "admin" && (
                   <NavLink
                     to="/admin"
                     className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-black hover:bg-gray-50"
-                    style={({ isActive }) => isActive ? activeStyle : undefined}
+                    style={({ isActive }) =>
+                      isActive ? activeStyle : undefined
+                    }
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <Settings className="h-4 w-4" />
@@ -183,8 +236,8 @@ const Navbar: React.FC = () => {
                   </NavLink>
                 )}
                 <Logout
-                  variant="full" 
-                  onCloseMenu={() => setIsMenuOpen(false)} 
+                  variant="full"
+                  onCloseMenu={() => setIsMenuOpen(false)}
                 />
               </div>
             ) : (
