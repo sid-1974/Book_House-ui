@@ -51,9 +51,28 @@ export const useLoginMutation = ()=>{
          }
      },
      onError: (err: any) => {
+      
         const errorMessage =
           err.response?.data?.message ;
         toast.error(errorMessage);
       },
      })
+}
+
+export const useForgotpassword = () =>{
+  return useMutation({
+    mutationFn:async(data:any)=>{
+      return await post("/auth/api/forgot-password",data);
+    },
+    onSuccess:(response)=>{
+      if(response.success){
+        toast.success(response.message);
+      }else{
+        console.error(response.message)
+      }
+    },
+    onError:(error:any)=>{
+      toast.error(error.response?.data?.message)
+    }
+  })
 }

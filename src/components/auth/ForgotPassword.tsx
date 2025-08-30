@@ -2,77 +2,106 @@ import React, { useState } from 'react';
 import { ArrowLeft, Mail, Eye, EyeOff } from 'lucide-react';
 import { MuiOtpInput } from "mui-one-time-password-input";
 import LoadingContainer from '../../utils/loader/LoadingContainer';
+import { useForgotpassword } from '../../api/auth';
+import { toast } from '../../utils/toaster/ToastContainer';
 
 interface ForgotPasswordProps {
   onBackToLogin: () => void;
 }
 
+type ActionType = 'send_otp' | 'verify_otp' | 'reset_password' | 'resend_otp';
+
 const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onBackToLogin }) => {
-  const [step, setStep] = useState<number>(1); // 1: Email, 2: OTP, 3: Reset Password
-  const [email, setEmail] = useState<string>('');
-  const [otp, setOtp] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [message, setMessage] = useState<string>('');
+  const [step, setStep] = useState<number>(1);
+  const [otp, setOtp] = useState<string>("");
+  const [currentAction, setCurrentAction] = useState<ActionType>('send_otp');
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    confirmPassword: ''
+  });
 
-  const handleSendOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setMessage('Sending OTP to your email...');
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      setStep(2);
-      setMessage('OTP has been sent to your email address');
-    }, 2000);
+  const ForgotPasswordMutation = useForgotpassword();
+  const { mutate, isPending } = ForgotPasswordMutation;
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
-  const handleVerifyOtp = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    setMessage('Verifying OTP...');
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      if (otp.length === 6 && otp === '123456') { // Simple mock validation
-        setStep(3);
-        setMessage('');
-      } else {
-        setMessage('Invalid OTP. Please try again.');
+    try {
+      if (step === 1 && formData.email) {
+        setCurrentAction('send_otp');
+        mutate({ email: formData.email }, {
+          onSuccess: () => {
+            setStep((prev) => prev + 1);
+          },
+          onError: (error) => {
+            console.error("Error sending OTP", error);
+          },
+        });
+      } else if (step === 2 && otp.length === 6) {
+        setCurrentAction('verify_otp');
+        mutate({ email: formData.email, otp }, {
+          onSuccess: () => {
+            setStep((prev) => prev + 1);
+          },
+          onError: () => {
+            setOtp("");
+          },
+        });
+      } else if (step === 3) {
+        if (formData.password !== formData.confirmPassword) {
+          toast.error("Passwords do not match");
+          return;
+        }
+        setCurrentAction('reset_password');
+        mutate({ email: formData.email, password: formData.password, otp }, {
+          onSuccess: () => {
+            onBackToLogin();
+            setFormData({ email: "", password: "", confirmPassword: "" });
+            setOtp("");
+            setStep(1);
+          },
+          onError: (error) => {
+            console.error("Error resetting password", error);
+          },
+        });
       }
-    }, 2000);
+    } catch (error) {
+      console.error("Error", error);
+    }
   };
 
-  const handleResetPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (password !== confirmPassword) {
-      setMessage('Passwords do not match');
-      return;
-    }
-    
-    setIsLoading(true);
-    setMessage('Resetting your password...');
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      setMessage('Password has been reset successfully!');
-      
-      // Redirect to login after a delay
-      setTimeout(() => {
-        onBackToLogin();
-      }, 2000);
-    }, 2000);
+  const handleResendOtp = () => {
+    setCurrentAction('resend_otp');
+    mutate({ email: formData.email });
   };
 
   const handleOtpChange = (newValue: string) => {
     setOtp(newValue);
+  };
+
+  const getLoadingMessage = () => {
+    switch (currentAction) {
+      case 'send_otp':
+        return "Sending OTP...";
+      case 'resend_otp':
+        return "Resending OTP...";
+      case 'verify_otp':
+        return "Verifying OTP...";
+      case 'reset_password':
+        return "Resetting password...";
+      default:
+        return "Processing...";
+    }
   };
 
   return (
@@ -86,35 +115,16 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onBackToLogin }) => {
             <ArrowLeft className="h-4 w-4 mr-1" />
             Back to login
           </button>
-          
           <div className="flex justify-center">
             <Mail className="h-12 w-12 text-black" />
           </div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            {step === 1 && 'Reset Your Password'}
-            {step === 2 && 'Verify OTP'}
-            {step === 3 && 'Create New Password'}
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            {step === 1 && 'Enter your email to receive a verification code'}
-            {step === 2 && 'Enter the 6-digit code sent to your email'}
-            {step === 3 && 'Create a strong, new password for your account'}
-          </p>
         </div>
 
-        {message && (
-          <div className={`p-3 rounded-md text-center ${
-            message.includes('successfully') 
-              ? 'bg-green-100 text-green-700' 
-              : 'bg-blue-100 text-blue-700'
-          }`}>
-            {message}
-          </div>
-        )}
-
         <div className="bg-white py-8 px-4 shadow rounded-lg sm:px-10">
-          {step === 1 && (
-            <form className="space-y-6" onSubmit={handleSendOtp}>
+          <h2 className="text-center text-2xl font-bold text-gray-900 mb-6">Reset Password</h2>
+      
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            {step >= 1 && (
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                   Email address
@@ -124,27 +134,16 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onBackToLogin }) => {
                   name="email"
                   type="email"
                   required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black"
+                  value={formData.email}
+                  onChange={handleChange}
+                  disabled={step > 1}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black disabled:bg-gray-100"
                   placeholder="Enter your email address"
                 />
               </div>
+            )}
 
-              <div>
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:opacity-50"
-                >
-                  Send OTP
-                </button>
-              </div>
-            </form>
-          )}
-
-          {step === 2 && (
-            <form className="space-y-6" onSubmit={handleVerifyOtp}>
+            {step >= 2 && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Enter verification code
@@ -154,114 +153,116 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ onBackToLogin }) => {
                   onChange={handleOtpChange}
                   length={6}
                   className="gap-2"
+                  validateChar={(char: string) => /^\d+$/.test(char)}
                   TextFieldsProps={{
+                    disabled: step > 2,
                     placeholder: '-',
                     size: 'small',
+                    sx: {
+                      "& .MuiOutlinedInput-root": {
+                        height: "40px",
+                        "&:hover fieldset": {
+                          borderColor: "#000",
+                        },
+                        "&.Mui-focused fieldset": {
+                          borderColor: "#000",
+                        },
+                      },
+                    },
                   }}
                 />
-              </div>
-
-              <div>
-                <button
-                  type="submit"
-                  disabled={isLoading || otp.length !== 6}
-                  className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:opacity-50"
-                >
-                  Verify OTP
-                </button>
-              </div>
-
-              <div className="text-center text-sm text-gray-600">
-                Didn't receive the code?{" "}
-                <button
-                  type="button"
-                  onClick={handleSendOtp}
-                  className="font-medium text-black hover:text-gray-800 cursor-pointer"
-                >
-                  Resend OTP
-                </button>
-              </div>
-            </form>
-          )}
-
-          {step === 3 && (
-            <form className="space-y-6" onSubmit={handleResetPassword}>
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                  New Password
-                </label>
-                <div className="relative mt-1">
-                  <input
-                    id="password"
-                    name="password"
-                    type={showPassword ? 'text' : 'password'}
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black pr-10"
-                    placeholder="Enter your new password"
-                  />
+                <div className="text-center text-sm text-gray-600 mt-2">
+                  Didn't receive the code?{" "}
                   <button
                     type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                    onClick={() => setShowPassword(!showPassword)}
+                    onClick={handleResendOtp}
+                    className="font-medium text-black hover:text-gray-800 cursor-pointer"
+                    disabled={isPending}
                   >
-                    {showPassword ? (
-                      <EyeOff className="h-5 w-5 text-gray-400" />
-                    ) : (
-                      <Eye className="h-5 w-5 text-gray-400" />
-                    )}
+                    Resend OTP
                   </button>
                 </div>
               </div>
+            )}
 
-              <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                  Confirm New Password
-                </label>
-                <div className="relative mt-1">
-                  <input
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type={showConfirmPassword ? 'text' : 'password'}
-                    required
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black pr-10"
-                    placeholder="Confirm your new password"
-                  />
-                  <button
-                    type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  >
-                    {showConfirmPassword ? (
-                      <EyeOff className="h-5 w-5 text-gray-400" />
-                    ) : (
-                      <Eye className="h-5 w-5 text-gray-400" />
-                    )}
-                  </button>
+            {step === 3 && (
+              <>
+                <div>
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                    New Password
+                  </label>
+                  <div className="relative mt-1">
+                    <input
+                      id="password"
+                      name="password"
+                      type={showPassword ? 'text' : 'password'}
+                      required
+                      value={formData.password}
+                      onChange={handleChange}
+                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black pr-10"
+                      placeholder="Enter your new password"
+                    />
+                    <button
+                      type="button"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-5 w-5 text-gray-400" />
+                      ) : (
+                        <Eye className="h-5 w-5 text-gray-400" />
+                      )}
+                    </button>
+                  </div>
                 </div>
-              </div>
 
-              <div>
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:opacity-50"
-                >
-                  Save New Password
-                </button>
-              </div>
-            </form>
-          )}
+                <div>
+                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+                    Confirm New Password
+                  </label>
+                  <div className="relative mt-1">
+                    <input
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      type={showConfirmPassword ? 'text' : 'password'}
+                      required
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      className={`block w-full px-3 py-2 border  rounded-md shadow-sm focus:outline-none focus:ring-black focus:border-black pr-10`}
+                      placeholder="Confirm your new password"
+                    />
+                    <button
+                      type="button"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff className="h-5 w-5 text-gray-400" />
+                      ) : (
+                        <Eye className="h-5 w-5 text-gray-400" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+
+            <div>
+              <button
+                type="submit"
+                disabled={isPending || (step === 2 && otp.length !== 6)}
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:opacity-50"
+              >
+                {step === 1 ? "Send OTP" : step === 2 ? "Verify OTP" : "Reset Password"}
+              </button>
+            </div>
+          </form>
         </div>
-        
-        <LoadingContainer open={isLoading} message={
-          step === 1 ? "Sending OTP..." : 
-          step === 2 ? "Verifying OTP..." : 
-          "Resetting password..."
-        } />
+
+        <LoadingContainer
+          open={isPending}
+          message={getLoadingMessage()}
+        />
       </div>
     </div>
   );

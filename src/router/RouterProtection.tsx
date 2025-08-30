@@ -9,11 +9,11 @@ const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
   const userRole = TokenService.getRole();
 
   if (!userRole) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   if (!allowedRoles.includes(userRole)) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   return <Outlet />;
