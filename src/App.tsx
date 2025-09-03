@@ -6,13 +6,13 @@ import {
   useLocation,
 } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-// import { AuthProvider, useAuth } from './context/AuthContext';
 import Navbar from "./components/common/Navbar";
 import Footer from "./components/common/Footer";
 import "./styles/variables.scss";
 import ProtectedRoute from "./router/RouterProtection";
 import LoadingContainer from "./utils/loader/LoadingContainer";
 import NotFoundPage from "./components/common/NotfoundPage";
+import Profile from "./pages/Profile";
 
 const Landing = lazy(() => import("./pages/Landing"));
 const Login = lazy(() => import("./pages/Login"));
@@ -36,6 +36,7 @@ const AppContent: React.FC = () => {
       "/community",
       "/about",
       "/admin",
+      "/profile",
     ].includes(location.pathname);
 
   return (
@@ -49,6 +50,9 @@ const AppContent: React.FC = () => {
           <Route path="/authors" element={<Authors />} />
           <Route path="/community" element={<Community />} />
           <Route path="/about" element={<About />} />
+          <Route element={<ProtectedRoute allowedRoles={["user"]} />}>
+          <Route path="/profile" element={<Profile />} />
+          </Route>
           <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
             <Route path="/admin" element={<AdminDashboard />} />
           </Route>
@@ -63,7 +67,6 @@ const AppContent: React.FC = () => {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      {/* <AuthProvider> */}
       <Router>
         <Suspense
           fallback={<LoadingContainer open={true} message="Loading..." />}
@@ -71,7 +74,6 @@ function App() {
           <AppContent />
         </Suspense>
       </Router>
-      {/* </AuthProvider> */}
     </QueryClientProvider>
   );
 }

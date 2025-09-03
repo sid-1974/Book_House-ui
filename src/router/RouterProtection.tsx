@@ -6,14 +6,21 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
+  const token = TokenService.getToken();
   const userRole = TokenService.getRole();
 
-  if (!userRole) {
+  
+  if (!token) {
     return <Navigate to="/login" replace />;
   }
 
+ 
+  if (!userRole) {
+    return <Navigate to="/" replace />;
+  }
+
   if (!allowedRoles.includes(userRole)) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return <Outlet />;

@@ -11,6 +11,7 @@ import { LogOut, X } from 'lucide-react';
 import useAuth from '../../hook/UseAuth';
 import { toast } from '../../utils/toaster/ToastContainer';
 import LoadingContainer from '../../utils/loader/LoadingContainer';
+import { useNavigate } from 'react-router-dom';
 
 interface LogoutProps {
   variant?: 'text' | 'icon' | 'full';
@@ -21,13 +22,14 @@ const Logout: React.FC<LogoutProps> = ({ variant = 'full', onCloseMenu }) => {
   const { logout } = useAuth();
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleOpen = () => {
     setOpen(true);
   };
 
   const handleClose = () => {
-    if (!loading) { // Only allow closing if not loading
+    if (!loading) { 
       setOpen(false);
     }
   };
@@ -35,9 +37,9 @@ const Logout: React.FC<LogoutProps> = ({ variant = 'full', onCloseMenu }) => {
   const handleConfirmLogout = async () => {
     setLoading(true);
     try {
-      // Simulate a small delay for better UX
       await new Promise(resolve => setTimeout(resolve, 500));
       logout();
+      navigate('/');
       toast.success("Logged out successfully");
       setOpen(false);
       if (onCloseMenu) {
@@ -51,7 +53,6 @@ const Logout: React.FC<LogoutProps> = ({ variant = 'full', onCloseMenu }) => {
     }
   };
 
-  // Render different button variants
   const renderButton = () => {
     switch (variant) {
       case 'icon':
@@ -107,14 +108,12 @@ const Logout: React.FC<LogoutProps> = ({ variant = 'full', onCloseMenu }) => {
           }
         }}
       >
-        {/* Show loading overlay */}
         {loading && (
           <div className="absolute inset-0 bg-white bg-opacity-70 flex items-center justify-center z-10 rounded-2xl">
             <LoadingContainer open={true} message="Logging out..." />
           </div>
         )}
 
-        {/* Close button in top right corner */}
         <IconButton
           aria-label="close"
           onClick={handleClose}
@@ -124,7 +123,7 @@ const Logout: React.FC<LogoutProps> = ({ variant = 'full', onCloseMenu }) => {
             right: 12,
             top: 12,
             color: (theme) => theme.palette.grey[500],
-            zIndex: 11 // Above loading overlay
+            zIndex: 11 
           }}
         >
           <X className="h-5 w-5" />

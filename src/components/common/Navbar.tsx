@@ -87,6 +87,15 @@ const Navbar: React.FC = () => {
             >
               About Us
             </NavLink>
+            {userRole === "admin" && (
+              <NavLink
+                to="/admin"
+                className="text-gray-700 hover:text-black transition-colors font-medium"
+                style={({ isActive }) => (isActive ? activeStyle : undefined)}
+              >
+                Dashboard
+              </NavLink>
+            )}
           </div>
 
           {/* Desktop Auth Links */}
@@ -94,18 +103,6 @@ const Navbar: React.FC = () => {
             {isLoggedIn ? (
               <>
                 <div className="flex items-center space-x-4">
-                  {userRole === "admin" && (
-                    <NavLink
-                      to="/admin"
-                      className="flex items-center space-x-1 text-gray-700 hover:text-black transition-colors"
-                      style={({ isActive }) =>
-                        isActive ? activeStyle : undefined
-                      }
-                    >
-                      <Settings className="h-4 w-4" />
-                      <span>Admin</span>
-                    </NavLink>
-                  )}
                   <div
                     className="flex items-center space-x-2 cursor-pointer"
                     onClick={handleAvatarClick}
@@ -130,7 +127,11 @@ const Navbar: React.FC = () => {
                 <Logout variant="full" />
               </>
             ) : (
-              <NavLink to="/login" className="btn-primary">
+              <NavLink 
+                to="/login" 
+                className="btn-primary"
+          
+              >
                 Login
               </NavLink>
             )}
@@ -226,9 +227,7 @@ const Navbar: React.FC = () => {
                   <NavLink
                     to="/admin"
                     className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-black hover:bg-gray-50"
-                    style={({ isActive }) =>
-                      isActive ? activeStyle : undefined
-                    }
+                    style={({ isActive }) => (isActive ? activeStyle : undefined)}
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <Settings className="h-4 w-4" />
@@ -245,6 +244,7 @@ const Navbar: React.FC = () => {
                 <NavLink
                   to="/login"
                   className="block w-full text-center btn-primary"
+                  style={({ isActive }) => (isActive ? activeStyle : undefined)}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Login
