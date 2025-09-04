@@ -79,7 +79,7 @@ const ProfileInformation = ({user} :ProfileInformationProps) => {
       <TextField
         label="Bio"
         name="bio"
-        type="tel"
+        type="text"
         value={formData.bio}
         onChange={handleInputChange}
         fullWidth
