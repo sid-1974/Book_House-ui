@@ -9,3 +9,6 @@
     box-sizing: border-box;
     font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !important ;
 }
+::-webkit-scrollbar{
+    display: none;
+  }

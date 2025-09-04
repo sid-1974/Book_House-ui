@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+// import { ChevronLeft, ChevronRight } from 'lucide-react';
 import BookCard from './BookCard';
 import { Book } from '../../types';
 
-interface BookCarouselProps {
+interface BookProps {
   books: Book[];
 }
 
-const BookCarousel: React.FC<BookCarouselProps> = ({ books }) => {
+const BookCarousel: React.FC<BookProps> = ({ books }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
@@ -22,14 +22,14 @@ const BookCarousel: React.FC<BookCarouselProps> = ({ books }) => {
     return () => clearInterval(interval);
   }, [books.length, isAutoPlaying]);
 
-  const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % books.length);
-  };
+  // const nextSlide = () => {
+  //   setCurrentIndex((prev) => (prev + 1) % books.length);
+  // };
 
-  const prevSlide = () => {
-    setCurrentIndex((prev) => (prev - 1 + books.length) % books.length);
-  };
-
+  // const prevSlide = () => {
+  //   setCurrentIndex((prev) => (prev - 1 + books.length) % books.length);
+  // };
+  
   const handleLike = (bookId: string) => {
     console.log('Liked book:', bookId);
   };
@@ -90,7 +90,7 @@ const BookCarousel: React.FC<BookCarouselProps> = ({ books }) => {
           </div>
 
           {/* Navigation buttons */}
-          <button
+          {/* <button
             onClick={prevSlide}
             className="absolute left-4 top-1/2 -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-70 text-white p-3 rounded-full transition-all"
           >
@@ -102,11 +102,11 @@ const BookCarousel: React.FC<BookCarouselProps> = ({ books }) => {
             className="absolute right-4 top-1/2 -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-70 text-white p-3 rounded-full transition-all"
           >
             <ChevronRight className="h-6 w-6" />
-          </button>
+          </button> */}
         </div>
 
         {/* Carousel indicators */}
-        <div className="flex justify-center mt-8 space-x-2">
+        {/* <div className="flex justify-center mt-8 space-x-2">
           {books.map((_, index) => (
             <button
               key={index}
@@ -116,7 +116,7 @@ const BookCarousel: React.FC<BookCarouselProps> = ({ books }) => {
               }`}
             />
           ))}
-        </div>
+        </div> */}
       </div>
     </div>
   );

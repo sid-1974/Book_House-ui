@@ -90,7 +90,7 @@ const AboutSection: React.FC = () => {
               Connect with thousands of book lovers, discover new authors, and share your reading journey
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a href="/login" className="btn-primary">
+              <a href="/community" className="btn-primary">
                 Get Started Today
               </a>
               <button className="btn-secondary">

@@ -17,6 +17,7 @@ const BookCard: React.FC<BookCardProps> = ({
   onComment,
   onViewMore
 }) => {
+  
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
       <div className="relative">
@@ -39,15 +40,15 @@ const BookCard: React.FC<BookCardProps> = ({
         <p className="text-gray-700 mb-4 line-clamp-3">
           {book.description}
         </p>
-
+        
         <div className="flex items-center justify-between">
           <button
             onClick={() => onViewMore(book.id)}
             className="btn-primary text-sm"
           >
-            View More
+            Explore
           </button>
-
+            
           <div className="flex items-center space-x-2">
             <button
               onClick={() => onLike(book.id)}

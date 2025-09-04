@@ -1,13 +1,15 @@
-import { Box, Typography, TextField, } from "@mui/material";
+import { Box, TextField, } from "@mui/material";
 import { useState } from "react";
 import { User } from "../../../types";
 import { textFieldStyles } from "../../../utils/TextFieldStyles";
+import { updateProfileById } from "../../../api/user";
+import LoadingContainer from "../../../utils/loader/LoadingContainer";
 
 interface ProfileInformationProps {
   user: User | null; 
 }
 const ProfileInformation = ({user} :ProfileInformationProps) => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<Record<string, string>>({
     fullname:user?.fullname || '',
     email:user?.email || '',
     mobileno:user?.mobileno || '',
@@ -22,11 +24,11 @@ const ProfileInformation = ({user} :ProfileInformationProps) => {
       [name]: value,
     }));
   };
-
+  const UpdateUser = updateProfileById();
+  const { mutate,isPending } = UpdateUser;
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Add logic to save changes (e.g., API call)
-    console.log("Saving profile changes:", formData);
+    mutate(formData);
   };
 
   return (
@@ -39,13 +41,10 @@ const ProfileInformation = ({user} :ProfileInformationProps) => {
         mx: "auto",
       }}
     >
-      <Typography variant="h5" className="font-bold text-gray-900 mb-2">
-        Personal Information
-      </Typography>
-      
+    
       <TextField
         label="Full Name"
-        name="fullName"
+        name="fullname"
         value={formData.fullname}
         onChange={handleInputChange}
         fullWidth
@@ -93,10 +92,12 @@ const ProfileInformation = ({user} :ProfileInformationProps) => {
         type="submit"
         onClick={handleSubmit}
         className="btn-secondary"
+          disabled={isPending}
         style={{ textTransform: "none", width: "fit-content", alignSelf: "flex-start" }}
       >
         Save Changes
       </button>
+      {isPending && <LoadingContainer open={true} message="Updating..."/>}
     </Box>
   );
 };
