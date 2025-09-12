@@ -77,7 +77,12 @@ const UserProfile = () =>{
   <Box sx={{ padding: 2, display: "flex",flexDirection:{xs:"column-reverse",md:"row"} ,justifyContent: "space-between",alignItems: "center"}}>
     <Box>
       {activeTab === 0 && <Typography variant="h5" >Personal Information</Typography>}
-      {activeTab === 1 && <Typography variant="h5" >My Books</Typography>}
+      {activeTab === 1 && (
+  <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+    <Typography variant="h5">My Books</Typography>
+    <button className="btn-primary">Add Books</button>
+  </Box>
+)}
       {activeTab === 2 && <Typography variant="h5" >Settings</Typography>}
     </Box>
     <Tabs

@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from "react";
+import React, { lazy, Suspense, useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -38,6 +38,11 @@ const AppContent: React.FC = () => {
       "/admin",
       "/profile",
     ].includes(location.pathname);
+
+      useEffect(() => {
+    window.scrollTo(0, 0); 
+  }, [location.pathname]);
+ 
 
   return (
     <div className="min-h-screen bg-white">
