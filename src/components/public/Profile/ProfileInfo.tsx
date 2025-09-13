@@ -4,6 +4,7 @@ import { User } from "../../../types";
 import { textFieldStyles } from "../../../utils/TextFieldStyles";
 import { updateProfileById } from "../../../api/user";
 import LoadingContainer from "../../../utils/loader/LoadingContainer";
+import ConfirmationDialog from "../../common/ConfirmationDialog";
 
 interface ProfileInformationProps {
   user: User | null; 
@@ -26,13 +27,25 @@ const ProfileInformation = ({user} :ProfileInformationProps) => {
   };
   const UpdateUser = updateProfileById();
   const { mutate,isPending } = UpdateUser;
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = () => {
     mutate(formData);
   };
 
+  const renderButton = () => (
+    <button
+      type="button" // Changed to button to avoid form submit on click
+      className="btn-secondary"
+      disabled={isPending}
+      style={{ textTransform: "none", width: "fit-content", alignSelf: "flex-start" }}
+    >
+      Save Changes
+    </button>
+  );
+
   return (
     <Box
+      component="form"
+      onSubmit={handleSubmit}
       sx={{
         display: "flex",
         flexDirection: "column",
@@ -88,15 +101,15 @@ const ProfileInformation = ({user} :ProfileInformationProps) => {
         sx={textFieldStyles}
       />
       
-      <button
-        type="submit"
-        onClick={handleSubmit}
-        className="btn-secondary"
-          disabled={isPending}
-        style={{ textTransform: "none", width: "fit-content", alignSelf: "flex-start" }}
-      >
-        Save Changes
-      </button>
+      <ConfirmationDialog
+          triggerButton={renderButton()}
+          title="Confirm Profile Update"
+          message="Are you sure you want to save these changes?"
+          confirmButtonText="Save Changes"
+          cancelButtonText="Cancel"
+          onConfirm={handleSubmit}
+        />
+      
       {isPending && <LoadingContainer open={true} message="Updating..."/>}
     </Box>
   );

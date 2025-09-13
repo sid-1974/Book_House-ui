@@ -5,6 +5,7 @@ import ProfileInformation from "./ProfileInfo";
 import LoadingContainer from "../../../utils/loader/LoadingContainer";
 import BookCard from "../BookCard";
 import { mockBooks } from "../../../data/mockData";
+import ProfileSettings from "./ProfileSettings";
 
 
 
@@ -141,7 +142,10 @@ const UserProfile = () =>{
       </div>
     )}
     {activeTab === 2 && (
-      <Typography variant="body1">Settings Page Content</Typography>
+      <>
+      <Typography variant="body1" sx={{mb:2}}>Reset Your Password</Typography>
+      <ProfileSettings/>
+      </>
     )}
   </div>
 </div>

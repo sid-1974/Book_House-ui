@@ -93,9 +93,9 @@ const AboutSection: React.FC = () => {
               <a href="/community" className="btn-primary">
                 Get Started Today
               </a>
-              <button className="btn-secondary">
+              <a href="/books" className="btn-secondary">
                 Explore Books
-              </button>
+              </a>
             </div>
           </div>
         </div>
